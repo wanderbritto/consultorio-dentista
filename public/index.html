@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>DentSaaS - Gestão para Dentistas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        .card-hover { transition: transform 0.2s, box-shadow 0.2s; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        html { scroll-behavior: smooth; }
+        button, a, .clickable { cursor: pointer; touch-action: manipulation; }
+        .status-select { transition: all 0.2s; }
+        .status-select:focus { outline: none; ring: 2px solid #4f46e5; }
+        .dente { transition: all 0.2s; cursor: pointer; }
+        .dente:hover { transform: scale(1.1); }
+        .tab-active { border-bottom: 2px solid #4f46e5; color: #4f46e5; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen">
+    
+    <!-- Barra de navegação superior -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3 overflow-x-auto">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-tooth text-3xl text-indigo-600"></i>
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-800">DentSaaS</h1>
+                </div>
+                <div class="flex space-x-2 md:space-x-4">
+                    <button onclick="mostrarAba('agenda')" id="btn-agenda" class="px-3 md:px-4 py-2 rounded-lg font-semibold transition-all bg-indigo-600 text-white shadow-md whitespace-nowrap">
+                        <i class="fas fa-calendar-alt mr-1"></i> Agenda
+                    </button>
+                    <button onclick="mostrarAba('pacientes')" id="btn-pacientes" class="px-3 md:px-4 py-2 rounded-lg font-semibold transition-all text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+                        <i class="fas fa-users mr-1"></i> Pacientes
+                    </button>
+                    <button onclick="mostrarAba('consultas')" id="btn-consultas" class="px-3 md:px-4 py-2 rounded-lg font-semibold transition-all text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+                        <i class="fas fa-list mr-1"></i> Consultas
+                    </button>
+                    <button onclick="mostrarAba('financeiro')" id="btn-financeiro" class="px-3 md:px-4 py-2 rounded-lg font-semibold transition-all text-gray-600 hover:bg-gray-100 whitespace-nowrap">
+                        <i class="fas fa-chart-line mr-1"></i> Financeiro
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-6 md:py-8">
+        
+        <!-- ABA AGENDA -->
+        <div id="aba-agenda" class="aba-conteudo">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-calendar-check text-indigo-600 mr-3"></i>
+                    Agenda de Consultas
+                    <span class="text-sm bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full ml-3">Ativas</span>
+                </h2>
+                <button onclick="abrirModalAgenda()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Nova Consulta
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-lg p-4 shadow-md card-hover">
+                    <div><p class="text-gray-500 text-sm">Total Hoje</p><p class="text-2xl font-bold text-indigo-600" id="total-hoje">0</p></div>
+                    <i class="fas fa-calendar-day text-4xl text-indigo-200 float-right -mt-8"></i>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-md card-hover">
+                    <div><p class="text-gray-500 text-sm">Agendadas</p><p class="text-2xl font-bold text-yellow-600" id="total-agendadas">0</p></div>
+                    <i class="fas fa-clock text-4xl text-yellow-200 float-right -mt-8"></i>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-md card-hover">
+                    <div><p class="text-gray-500 text-sm">Em Andamento</p><p class="text-2xl font-bold text-blue-600" id="total-andamento">0</p></div>
+                    <i class="fas fa-spinner text-4xl text-blue-200 float-right -mt-8"></i>
+                </div>
+                <div class="bg-white rounded-lg p-4 shadow-md card-hover">
+                    <div><p class="text-gray-500 text-sm">Concluídas</p><p class="text-2xl font-bold text-green-600" id="total-concluidas-agenda">0</p></div>
+                    <i class="fas fa-check-circle text-4xl text-green-200 float-right -mt-8"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr><th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Paciente</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Telefone</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Data</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Hora</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Valor</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Status</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Pagamento</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Ações</th>
+                            </tr></thead>
+                        <tbody id="lista-consultas-ativas"></tbody>
+                    <table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA PACIENTES -->
+        <div id="aba-pacientes" class="aba-conteudo hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-users text-indigo-600 mr-3"></i>
+                    Pacientes
+                    <span class="text-sm bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full ml-3">Prontuário Digital</span>
+                </h2>
+                <button onclick="abrirModalPaciente()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg flex items-center">
+                    <i class="fas fa-plus mr-2"></i> Novo Paciente
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr><th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Nome</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Telefone</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">E-mail</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Convênio</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Última Consulta</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Ações</th>
+                            </tr></thead>
+                        <tbody id="lista-pacientes"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA CONSULTAS (Histórico) -->
+        <div id="aba-consultas" class="aba-conteudo hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-history text-purple-600 mr-3"></i>
+                    Histórico de Consultas
+                    <span class="text-sm bg-purple-100 text-purple-600 px-2 py-1 rounded-full ml-3">Concluídas</span>
+                </h2>
+                <div class="flex gap-2">
+                    <input type="text" id="filtro-paciente" placeholder="Buscar paciente..." class="px-3 py-2 border rounded-lg">
+                    <button onclick="filtrarConsultasConcluidas()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-search mr-2"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div class="bg-white rounded-lg p-4 shadow-md"><div><p class="text-gray-500 text-sm">Total Realizado</p><p class="text-2xl font-bold text-purple-600" id="total-concluidas">0</p></div></div>
+                <div class="bg-white rounded-lg p-4 shadow-md"><div><p class="text-gray-500 text-sm">Este Mês</p><p class="text-2xl font-bold text-green-600" id="total-mes">0</p></div></div>
+                <div class="bg-white rounded-lg p-4 shadow-md"><div><p class="text-gray-500 text-sm">Faturamento</p><p class="text-2xl font-bold text-blue-600" id="faturamento-concluidas">R$ 0,00</p></div></div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50"><tr><th class="px-4 py-3">Paciente</th><th class="px-4 py-3">Telefone</th><th class="px-4 py-3">Data</th><th class="px-4 py-3">Hora</th><th class="px-4 py-3">Valor</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Pagamento</th><th class="px-4 py-3">Ações</th></tr></thead>
+                        <tbody id="lista-consultas-concluidas"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA FINANCEIRO -->
+        <div id="aba-financeiro" class="aba-conteudo hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800"><i class="fas fa-coins text-green-600 mr-3"></i>Controle Financeiro</h2>
+                <button onclick="abrirModalFinanceiro()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg flex items-center"><i class="fas fa-plus mr-2"></i>Registrar Entrada</button>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-4 text-white"><div><p class="text-sm">Total Recebido</p><p class="text-3xl font-bold" id="total-recebido">R$ 0,00</p></div></div>
+                <div class="bg-white rounded-lg p-4 shadow-md"><div><p class="text-gray-500">Total Transações</p><p class="text-2xl font-bold text-green-600" id="total-transacoes">0</p></div></div>
+            </div>
+            <div class="bg-white rounded-lg p-4 shadow-md mb-6">
+                <div class="flex gap-3">
+                    <select id="filtro-pagamento" class="px-3 py-2 border rounded-lg"><option value="">Todos pagamentos</option><option value="pix">PIX</option><option value="dinheiro">Dinheiro</option><option value="cartao">Cartão</option></select>
+                    <input type="month" id="filtro-mes" class="px-3 py-2 border rounded-lg">
+                    <button onclick="filtrarRecebimentos()" class="bg-gray-600 text-white px-4 py-2 rounded-lg"><i class="fas fa-search mr-2"></i>Filtrar</button>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50"><tr><th>Data</th><th>Paciente</th><th>Valor</th><th>Pagamento</th><th>Descrição</th><th>Ações</th></tr></thead>
+                        <tbody id="lista-recebimentos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PACIENTE -->
+    <div id="modal-paciente" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4 overflow-y-auto" onclick="fecharModalPaciente(event)">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-auto my-8" onclick="event.stopPropagation()">
+            <div class="p-6 max-h-[90vh] overflow-y-auto">
+                <h3 class="text-xl font-bold text-gray-800 mb-4" id="modal-paciente-titulo">👤 Novo Paciente</h3>
+                <form id="form-paciente">
+                    <input type="hidden" id="paciente-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Nome Completo *</label><input type="text" id="paciente-nome-completo" required class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Data Nascimento</label><input type="date" id="paciente-data-nascimento" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">CPF</label><input type="text" id="paciente-cpf" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">RG</label><input type="text" id="paciente-rg" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Celular</label><input type="tel" id="paciente-celular" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Telefone</label><input type="tel" id="paciente-telefone-fixo" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">E-mail</label><input type="email" id="paciente-email" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Convênio</label><input type="text" id="paciente-convenio" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Nº Carteirinha</label><input type="text" id="paciente-carteirinha" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Contato Emergência</label><input type="text" id="paciente-emergencia" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4 col-span-2"><label class="block text-sm font-bold mb-2">Endereço</label><input type="text" id="paciente-endereco" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Cidade</label><input type="text" id="paciente-cidade" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">Estado</label><input type="text" id="paciente-estado" class="w-full px-3 py-2 border rounded-lg"></div>
+                        <div class="mb-4"><label class="block text-sm font-bold mb-2">CEP</label><input type="text" id="paciente-cep" class="w-full px-3 py-2 border rounded-lg"></div>
+                    </div>
+                    <div class="flex gap-3 mt-4">
+                        <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg">Salvar</button>
+                        <button type="button" onclick="fecharModalPaciente()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 rounded-lg">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PRONTUÁRIO -->
+    <div id="modal-prontuario" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 p-4 overflow-y-auto" onclick="fecharModalProntuario(event)">
+        <div class="bg-white rounded-xl shadow-2xl max-w-5xl w-full mx-auto my-8" onclick="event.stopPropagation()">
+            <div class="p-6 max-h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800" id="prontuario-nome"></h3>
+                    <button onclick="fecharModalProntuario()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-2xl"></i></button>
+                </div>
+                
+                <div class="border-b border-gray-200 mb-4">
+                    <div class="flex flex-wrap gap-1">
+                        <button onclick="mostrarTabProntuario('dados')" id="tab-dados" class="px-4 py-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-600">📋 Dados</button>
+                        <button onclick="mostrarTabProntuario('clinico')" id="tab-clinico" class="px-4 py-2 text-sm font-semibold text-gray-600 border-transparent">🩺 Histórico Clínico</button>
+                        <button onclick="mostrarTabProntuario('odontograma')" id="tab-odontograma" class="px-4 py-2 text-sm font-semibold text-gray-600 border-transparent">🦷 Odontograma</button>
+                        <button onclick="mostrarTabProntuario('consultas')" id="tab-consultas" class="px-4 py-2 text-sm font-semibold text-gray-600 border-transparent">📅 Consultas</button>
+                        <button onclick="mostrarTabProntuario('anotacoes')" id="tab-anotacoes" class="px-4 py-2 text-sm font-semibold text-gray-600 border-transparent">📝 Anotações</button>
+                        <button onclick="mostrarTabProntuario('arquivos')" id="tab-arquivos" class="px-4 py-2 text-sm font-semibold text-gray-600 border-transparent">📎 Arquivos</button>
+                    </div>
+                </div>
+                
+                <div id="tab-dados-content" class="tab-content">Carregando dados...</div>
+                <div id="tab-clinico-content" class="tab-content hidden">Carregando...</div>
+                <div id="tab-odontograma-content" class="tab-content hidden">Carregando...</div>
+                <div id="tab-consultas-content" class="tab-content hidden">Carregando...</div>
+                <div id="tab-anotacoes-content" class="tab-content hidden">Carregando...</div>
+                <div id="tab-arquivos-content" class="tab-content hidden">Carregando...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AGENDA -->
+    <div id="modal-agenda" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4" onclick="fecharModalAgenda(event)">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-auto" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4" id="modal-agenda-titulo">Nova Consulta</h3>
+                <form id="form-agenda">
+                    <input type="hidden" id="consulta-id">
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Paciente *</label>
+                        <select id="consulta-paciente-id" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">Selecione um paciente</option>
+                        </select>
+                        <button type="button" onclick="abrirModalPacienteParaAgenda()" class="text-sm text-indigo-600 mt-1">+ Cadastrar novo paciente</button>
+                    </div>
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Data *</label><input type="date" id="consulta-data" required class="w-full px-3 py-2 border rounded-lg"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Hora *</label><input type="time" id="consulta-hora" required class="w-full px-3 py-2 border rounded-lg"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Valor Total (R$)</label><input type="number" step="0.01" id="consulta-valor" value="0.00" class="w-full px-3 py-2 border rounded-lg"></div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="flex-1 bg-indigo-600 text-white font-bold py-2 rounded-lg">Salvar</button>
+                        <button type="button" onclick="fecharModalAgenda()" class="flex-1 bg-gray-300 text-gray-800 font-bold py-2 rounded-lg">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FINANCEIRO -->
+    <div id="modal-financeiro" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4" onclick="fecharModalFinanceiro(event)">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-auto" onclick="event.stopPropagation()">
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4" id="modal-financeiro-titulo">💰 Registrar Recebimento</h3>
+                <form id="form-financeiro">
+                    <input type="hidden" id="recebimento-id">
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Consulta</label>
+                        <select id="recebimento-consulta-id" class="w-full px-3 py-2 border rounded-lg">
+                            <option value="">📋 Selecione uma consulta</option>
+                        </select>
+                    </div>
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Valor *</label><input type="number" step="0.01" id="recebimento-valor" required class="w-full px-3 py-2 border rounded-lg"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Forma Pagamento *</label>
+                        <select id="recebimento-forma" required class="w-full px-3 py-2 border rounded-lg">
+                            <option value="pix">PIX</option><option value="dinheiro">Dinheiro</option><option value="cartao">Cartão</option>
+                        </select>
+                    </div>
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Data *</label><input type="date" id="recebimento-data" required class="w-full px-3 py-2 border rounded-lg"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold mb-2">Descrição</label><textarea id="recebimento-descricao" rows="2" class="w-full px-3 py-2 border rounded-lg" placeholder="Ex: 1ª parcela"></textarea></div>
+                    <div class="flex gap-3">
+                        <button type="submit" class="flex-1 bg-green-600 text-white font-bold py-2 rounded-lg">Salvar</button>
+                        <button type="button" onclick="fecharModalFinanceiro()" class="flex-1 bg-gray-300 text-gray-800 font-bold py-2 rounded-lg">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração dinâmica da API_URL para funcionar localmente e no Render
+        const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+        window.API_URL = isProduction 
+            ? `${window.location.protocol}//${window.location.hostname}/api`
+            : 'http://localhost:3000/api';
+        console.log('🌐 Ambiente:', isProduction ? 'Produção (Render)' : 'Desenvolvimento (Local)');
+        console.log('🌐 API_URL configurada:', window.API_URL);
+    </script>
+    <script src="/js/agenda.js"></script>
+    <script src="/js/financeiro.js"></script>
+    <script src="/js/pacientes.js"></script>
+    <script src="/js/prontuario.js"></script>
+    <script>
+        function mostrarAba(aba) {
+            document.querySelectorAll('.aba-conteudo').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`aba-${aba}`).classList.remove('hidden');
+            ['agenda', 'pacientes', 'consultas', 'financeiro'].forEach(a => {
+                const btn = document.getElementById(`btn-${a}`);
+                if(btn) { btn.classList.remove('bg-indigo-600', 'text-white'); btn.classList.add('text-gray-600'); }
+            });
+            const btnAtivo = document.getElementById(`btn-${aba}`);
+            if(btnAtivo) { btnAtivo.classList.add('bg-indigo-600', 'text-white'); btnAtivo.classList.remove('text-gray-600'); }
+            
+            if(aba === 'agenda' && typeof carregarConsultasAtivas === 'function') carregarConsultasAtivas();
+            if(aba === 'pacientes' && typeof carregarPacientes === 'function') carregarPacientes();
+            if(aba === 'consultas' && typeof carregarConsultasConcluidas === 'function') carregarConsultasConcluidas();
+            if(aba === 'financeiro' && typeof carregarRecebimentos === 'function') carregarRecebimentos();
+        }
+        
+        function filtrarConsultasConcluidas() { if(typeof carregarConsultasConcluidas === 'function') carregarConsultasConcluidas(); }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            if(typeof carregarConsultasAtivas === 'function') carregarConsultasAtivas();
+            if(typeof carregarRecebimentos === 'function') carregarRecebimentos();
+            if(typeof carregarSelectConsultas === 'function') carregarSelectConsultas();
+            if(typeof carregarPacientes === 'function') carregarPacientes();
+            if(typeof carregarSelectPacientes === 'function') carregarSelectPacientes();
+        });
+    </script>
+</body>
+</html>
