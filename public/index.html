@@ -49,7 +49,7 @@
 
     <div class="container mx-auto px-4 py-6 md:py-8">
         
-        <!-- ABA AGENDA -->
+        <!-- ============= ABA AGENDA ============= -->
         <div id="aba-agenda" class="aba-conteudo">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
@@ -85,7 +85,8 @@
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
-                            <tr><th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Paciente</th>
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Paciente</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Telefone</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Data</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Hora</th>
@@ -93,14 +94,15 @@
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Status</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Pagamento</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Ações</th>
-                            </tr></thead>
+                            </tr>
+                        </thead>
                         <tbody id="lista-consultas-ativas"></tbody>
-                    <table>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- ABA PACIENTES -->
+        <!-- ============= ABA PACIENTES ============= -->
         <div id="aba-pacientes" class="aba-conteudo hidden">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
@@ -117,20 +119,22 @@
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
-                            <tr><th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Nome</th>
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Nome</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Telefone</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">E-mail</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Convênio</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Última Consulta</th>
                                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Ações</th>
-                            </tr></thead>
+                            </tr>
+                        </thead>
                         <tbody id="lista-pacientes"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ABA CONSULTAS (Histórico) -->
+        <!-- ============= ABA CONSULTAS (Histórico) ============= -->
         <div id="aba-consultas" class="aba-conteudo hidden">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800 flex items-center">
@@ -145,22 +149,35 @@
                     </button>
                 </div>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <div class="bg-white rounded-lg p-4 shadow-md"><div><p class="text-gray-500 text-sm">Total Realizado</p><p class="text-2xl font-bold text-purple-600" id="total-concluidas">0</p></div></div>
                 <div class="bg-white rounded-lg p-4 shadow-md"><div><p class="text-gray-500 text-sm">Este Mês</p><p class="text-2xl font-bold text-green-600" id="total-mes">0</p></div></div>
                 <div class="bg-white rounded-lg p-4 shadow-md"><div><p class="text-gray-500 text-sm">Faturamento</p><p class="text-2xl font-bold text-blue-600" id="faturamento-concluidas">R$ 0,00</p></div></div>
             </div>
+
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50"><tr><th class="px-4 py-3">Paciente</th><th class="px-4 py-3">Telefone</th><th class="px-4 py-3">Data</th><th class="px-4 py-3">Hora</th><th class="px-4 py-3">Valor</th><th class="px-4 py-3">Status</th><th class="px-4 py-3">Pagamento</th><th class="px-4 py-3">Ações</th></tr></thead>
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3">Paciente</th>
+                                <th class="px-4 py-3">Telefone</th>
+                                <th class="px-4 py-3">Data</th>
+                                <th class="px-4 py-3">Hora</th>
+                                <th class="px-4 py-3">Valor</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Pagamento</th>
+                                <th class="px-4 py-3">Ações</th>
+                            </tr>
+                        </thead>
                         <tbody id="lista-consultas-concluidas"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- ABA FINANCEIRO -->
+        <!-- ============= ABA FINANCEIRO ============= -->
         <div id="aba-financeiro" class="aba-conteudo hidden">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl md:text-3xl font-bold text-gray-800"><i class="fas fa-coins text-green-600 mr-3"></i>Controle Financeiro</h2>
@@ -180,7 +197,11 @@
             <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50"><tr><th>Data</th><th>Paciente</th><th>Valor</th><th>Pagamento</th><th>Descrição</th><th>Ações</th></tr></thead>
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th>Data</th><th>Paciente</th><th>Valor</th><th>Pagamento</th><th>Descrição</th><th>Ações</th>
+                            </tr>
+                        </thead>
                         <tbody id="lista-recebimentos"></tbody>
                     </table>
                 </div>
@@ -188,7 +209,7 @@
         </div>
     </div>
 
-    <!-- MODAL PACIENTE -->
+    <!-- ============= MODAL PACIENTE ============= -->
     <div id="modal-paciente" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4 overflow-y-auto" onclick="fecharModalPaciente(event)">
         <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-auto my-8" onclick="event.stopPropagation()">
             <div class="p-6 max-h-[90vh] overflow-y-auto">
@@ -220,7 +241,7 @@
         </div>
     </div>
 
-    <!-- MODAL PRONTUÁRIO -->
+    <!-- ============= MODAL PRONTUÁRIO ============= -->
     <div id="modal-prontuario" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 p-4 overflow-y-auto" onclick="fecharModalProntuario(event)">
         <div class="bg-white rounded-xl shadow-2xl max-w-5xl w-full mx-auto my-8" onclick="event.stopPropagation()">
             <div class="p-6 max-h-[85vh] overflow-y-auto">
@@ -228,7 +249,6 @@
                     <h3 class="text-2xl font-bold text-gray-800" id="prontuario-nome"></h3>
                     <button onclick="fecharModalProntuario()" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-2xl"></i></button>
                 </div>
-                
                 <div class="border-b border-gray-200 mb-4">
                     <div class="flex flex-wrap gap-1">
                         <button onclick="mostrarTabProntuario('dados')" id="tab-dados" class="px-4 py-2 text-sm font-semibold border-b-2 border-indigo-500 text-indigo-600">📋 Dados</button>
@@ -239,7 +259,6 @@
                         <button onclick="mostrarTabProntuario('arquivos')" id="tab-arquivos" class="px-4 py-2 text-sm font-semibold text-gray-600 border-transparent">📎 Arquivos</button>
                     </div>
                 </div>
-                
                 <div id="tab-dados-content" class="tab-content">Carregando dados...</div>
                 <div id="tab-clinico-content" class="tab-content hidden">Carregando...</div>
                 <div id="tab-odontograma-content" class="tab-content hidden">Carregando...</div>
@@ -250,7 +269,7 @@
         </div>
     </div>
 
-    <!-- MODAL AGENDA -->
+    <!-- ============= MODAL AGENDA ============= -->
     <div id="modal-agenda" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4" onclick="fecharModalAgenda(event)">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-auto" onclick="event.stopPropagation()">
             <div class="p-6">
@@ -275,7 +294,7 @@
         </div>
     </div>
 
-    <!-- MODAL FINANCEIRO -->
+    <!-- ============= MODAL FINANCEIRO ============= -->
     <div id="modal-financeiro" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4" onclick="fecharModalFinanceiro(event)">
         <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-auto" onclick="event.stopPropagation()">
             <div class="p-6">

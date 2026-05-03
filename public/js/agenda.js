@@ -125,7 +125,16 @@ async function carregarConsultasConcluidas() {
                     botaoPagamento = `<button onclick="abrirModalFinanceiroComConsulta(${consulta.id}, '${escapeHtml(consulta.paciente_nome)}')" class="ml-2 text-blue-600"><i class="fas fa-dollar-sign"></i></button>`;
                 }
                 
-                const row = `<tr><td class="px-4 py-3">${escapeHtml(consulta.paciente_nome)}</td><td class="px-4 py-3">${escapeHtml(consulta.paciente_telefone)}</td><td class="px-4 py-3">${formatarData(consulta.data)}</td><td class="px-4 py-3">${consulta.hora}</td><td class="px-4 py-3">${valorTotal > 0 ? `R$ ${valorTotal.toFixed(2)}` : '-'}</td><td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i> Concluída</span></td><td class="px-4 py-3"><span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${pagamentoColor}"><i class="fas ${pagamentoIcon} mr-1"></i> ${pagamentoText}</span>${botaoPagamento}</td><td class="px-4 py-3"><button onclick="reativarConsulta(${consulta.id})" class="text-green-600 mr-2"><i class="fas fa-undo-alt"></i></button><button onclick="excluirConsulta(${consulta.id})" class="text-red-600"><i class="fas fa-trash"></i></button></td></tr>`;
+                const row = `<tr>
+                    <td class="px-4 py-3">${escapeHtml(consulta.paciente_nome)}</td>
+                    <td class="px-4 py-3">${escapeHtml(consulta.paciente_telefone)}</td>
+                    <td class="px-4 py-3">${formatarData(consulta.data)}</td>
+                    <td class="px-4 py-3">${consulta.hora}</td>
+                    <td class="px-4 py-3">${valorTotal > 0 ? `R$ ${valorTotal.toFixed(2)}` : '-'}</td>
+                    <td class="px-4 py-3"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i> Concluída</span></td>
+                    <td class="px-4 py-3"><span class="inline-flex items-center px-2 py-1 text-xs rounded-full ${pagamentoColor}"><i class="fas ${pagamentoIcon} mr-1"></i> ${pagamentoText}</span>${botaoPagamento}</td>
+                    <td class="px-4 py-3"><button onclick="reativarConsulta(${consulta.id})" class="text-green-600 mr-2"><i class="fas fa-undo-alt"></i></button><button onclick="excluirConsulta(${consulta.id})" class="text-red-600"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
                 tbody.innerHTML += row;
             }
         }
@@ -208,6 +217,8 @@ async function abrirModalFinanceiroComConsulta(consultaId, pacienteNome) {
         mensagem.innerHTML = `<div class="text-sm text-blue-600 mb-2 p-2 bg-blue-50 rounded">💰 ${escapeHtml(pacienteNome)} - Total: R$ ${valorTotal.toFixed(2)} | Pago: R$ ${totalPago.toFixed(2)} | Pendente: R$ ${faltaPagar.toFixed(2)}</div>`;
         const valorInput = document.getElementById('recebimento-valor');
         if (valorInput) valorInput.placeholder = `Sugestão: R$ ${faltaPagar.toFixed(2)}`;
+    } else if (valorTotal > 0 && totalPago >= valorTotal) {
+        mensagem.innerHTML = `<div class="text-sm text-green-600 mb-2 p-2 bg-green-50 rounded">✅ ${escapeHtml(pacienteNome)} - Já está totalmente pago! Total: R$ ${valorTotal.toFixed(2)}</div>`;
     } else {
         mensagem.innerHTML = `<div class="text-sm text-green-600 mb-2 p-2 bg-green-50 rounded">💰 Registrando pagamento para: ${escapeHtml(pacienteNome)}</div>`;
     }
