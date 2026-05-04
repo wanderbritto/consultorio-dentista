@@ -1,5 +1,8 @@
 console.log('📋 Pacientes.js carregado');
 
+let pendenteAgenda = false;
+let modalAgendaAberto = false;
+
 async function carregarPacientes() {
     console.log('🔄 Carregando pacientes...');
     try {
@@ -15,7 +18,6 @@ async function carregarPacientes() {
             tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-500">Nenhum paciente cadastrado</td></tr>`;
         } else {
             for (const p of pacientes) {
-                // Buscar última consulta
                 const consultasResp = await fetch(`${window.API_URL}/consultas`);
                 const consultas = await consultasResp.json();
                 const ultimaConsulta = consultas.filter(c => c.paciente_id === p.id).sort((a,b) => new Date(b.data) - new Date(a.data))[0];
@@ -61,6 +63,7 @@ async function carregarSelectPacientes() {
 }
 
 function abrirModalPaciente() {
+    pendenteAgenda = false;
     document.getElementById('modal-paciente-titulo').textContent = '👤 Novo Paciente';
     document.getElementById('form-paciente').reset();
     document.getElementById('paciente-id').value = '';
@@ -69,20 +72,36 @@ function abrirModalPaciente() {
 }
 
 function abrirModalPacienteParaAgenda() {
-    abrirModalPaciente();
-    window.pendenteAgenda = true;
+    // Fechar modal da agenda primeiro
+    fecharModalAgenda();
+    pendenteAgenda = true;
+    setTimeout(() => {
+        document.getElementById('modal-paciente-titulo').textContent = '👤 Novo Paciente';
+        document.getElementById('form-paciente').reset();
+        document.getElementById('paciente-id').value = '';
+        document.getElementById('modal-paciente').classList.remove('hidden');
+        document.getElementById('modal-paciente').style.display = 'flex';
+    }, 100);
 }
 
 function fecharModalPaciente(event) {
     if (!event || event.target.id === 'modal-paciente' || !event) {
         document.getElementById('modal-paciente').classList.add('hidden');
         document.getElementById('modal-paciente').style.display = 'none';
-        window.pendenteAgenda = false;
+        
+        // Se veio da agenda, reabrir modal da agenda
+        if (pendenteAgenda) {
+            pendenteAgenda = false;
+            setTimeout(() => {
+                abrirModalAgenda();
+            }, 100);
+        }
     }
 }
 
 async function editarPaciente(id) {
     try {
+        pendenteAgenda = false;
         const response = await fetch(`${window.API_URL}/pacientes/${id}`);
         const dados = await response.json();
         const p = dados.paciente;
@@ -121,6 +140,7 @@ async function excluirPaciente(id) {
             alert('Paciente excluído com sucesso!');
             carregarPacientes();
             carregarSelectPacientes();
+            if (typeof carregarConsultasAtivas === 'function') carregarConsultasAtivas();
         } else {
             alert('Erro ao excluir paciente');
         }
@@ -173,9 +193,12 @@ document.getElementById('form-paciente')?.addEventListener('submit', async (e) =
             carregarPacientes();
             carregarSelectPacientes();
             
-            if (window.pendenteAgenda) {
-                window.pendenteAgenda = false;
-                abrirModalAgenda();
+            // Se veio da agenda, recarregar select e reabrir agenda
+            if (pendenteAgenda) {
+                pendenteAgenda = false;
+                setTimeout(() => {
+                    abrirModalAgenda();
+                }, 100);
             }
         } else {
             alert('Erro ao salvar paciente');

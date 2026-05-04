@@ -23,7 +23,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
             border-radius: 25px 25px 0 0;
@@ -69,11 +69,6 @@
             padding: 16px;
             margin-bottom: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s;
-        }
-        
-        .card:active {
-            transform: scale(0.98);
         }
         
         /* Botões para toque */
@@ -95,7 +90,6 @@
         
         .btn-primary:active {
             transform: scale(0.96);
-            opacity: 0.9;
         }
         
         .btn-success {
@@ -103,9 +97,15 @@
             color: white;
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
         }
         
         /* Status badges */
@@ -140,39 +140,14 @@
             backdrop-filter: blur(5px);
         }
         
-        /* Header */
-        .app-header {
-            background: white;
-            padding: 16px;
-            margin-bottom: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-        
-        /* Tabela responsiva */
-        .table-responsive {
-            overflow-x: auto;
+        /* Formulário com scroll */
+        .modal-scroll {
+            max-height: 85vh;
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
         
-        .table-modern {
-            width: 100%;
-            font-size: 13px;
-        }
-        
-        .table-modern th {
-            text-align: left;
-            padding: 12px 8px;
-            color: #6b7280;
-            font-weight: 600;
-            font-size: 11px;
-        }
-        
-        .table-modern td {
-            padding: 12px 8px;
-            border-top: 1px solid #f0f0f0;
-        }
-        
-        /* Formulários */
+        /* Inputs modernos */
         .input-modern {
             width: 100%;
             padding: 12px;
@@ -196,7 +171,14 @@
             display: block;
         }
         
-        /* Scroll para não sobrepor menu */
+        /* Grid para formulário */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        /* Esconder scrollbar mas manter funcionalidade */
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -215,7 +197,6 @@
 
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="content-area" id="mainContent">
-        <!-- O conteúdo será carregado dinamicamente aqui -->
         <div id="pageContent">
             <div class="text-center text-white py-10">
                 <i class="fas fa-tooth text-5xl mb-4"></i>
@@ -228,35 +209,35 @@
     <div class="bottom-nav">
         <div class="grid grid-cols-4 gap-2">
             <div onclick="navegarPara('agenda')" id="nav-agenda" class="nav-item active">
-                <i class="fas fa-calendar-alt text-indigo-600"></i>
-                <span class="text-gray-600">Agenda</span>
+                <i class="fas fa-calendar-alt"></i>
+                <span>Agenda</span>
             </div>
             <div onclick="navegarPara('pacientes')" id="nav-pacientes" class="nav-item">
-                <i class="fas fa-users text-gray-600"></i>
-                <span class="text-gray-600">Pacientes</span>
+                <i class="fas fa-users"></i>
+                <span>Pacientes</span>
             </div>
             <div onclick="navegarPara('consultas')" id="nav-consultas" class="nav-item">
-                <i class="fas fa-history text-gray-600"></i>
-                <span class="text-gray-600">Histórico</span>
+                <i class="fas fa-history"></i>
+                <span>Histórico</span>
             </div>
             <div onclick="navegarPara('financeiro')" id="nav-financeiro" class="nav-item">
-                <i class="fas fa-chart-line text-gray-600"></i>
-                <span class="text-gray-600">Financeiro</span>
+                <i class="fas fa-chart-line"></i>
+                <span>Financeiro</span>
             </div>
         </div>
     </div>
 
-    <!-- MODAL PACIENTE -->
-    <div id="modal-paciente" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4 overflow-y-auto modal-modern" onclick="fecharModalPaciente(event)">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto my-8" onclick="event.stopPropagation()">
-            <div class="p-5">
-                <div class="flex justify-between items-center mb-4">
+    <!-- MODAL PACIENTE (COM SCROLL) -->
+    <div id="modal-paciente" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4 modal-modern" onclick="fecharModalPaciente(event)">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-auto" onclick="event.stopPropagation()">
+            <div class="p-5 modal-scroll">
+                <div class="flex justify-between items-center mb-4 sticky top-0 bg-white z-10">
                     <h3 class="text-xl font-bold text-gray-800" id="modal-paciente-titulo">👤 Novo Paciente</h3>
                     <button onclick="fecharModalPaciente()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
                 </div>
                 <form id="form-paciente">
                     <input type="hidden" id="paciente-id">
-                    <div class="space-y-3">
+                    <div class="form-grid">
                         <div><label class="label-modern">Nome Completo *</label><input type="text" id="paciente-nome-completo" required class="input-modern"></div>
                         <div><label class="label-modern">Data Nascimento</label><input type="date" id="paciente-data-nascimento" class="input-modern"></div>
                         <div><label class="label-modern">Celular</label><input type="tel" id="paciente-celular" class="input-modern"></div>
@@ -276,7 +257,7 @@
                     </div>
                     <div class="flex gap-3 mt-5">
                         <button type="submit" class="btn-primary flex-1"><i class="fas fa-save mr-2"></i>Salvar</button>
-                        <button type="button" onclick="fecharModalPaciente()" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-2 rounded-xl">Cancelar</button>
+                        <button type="button" onclick="fecharModalPaciente()" class="btn-secondary flex-1">Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -293,13 +274,13 @@
                 </div>
                 <form id="form-agenda">
                     <input type="hidden" id="consulta-id">
-                    <div class="space-y-3">
+                    <div class="form-grid">
                         <div>
                             <label class="label-modern">Paciente *</label>
                             <select id="consulta-paciente-id" class="input-modern">
                                 <option value="">Selecione um paciente</option>
                             </select>
-                            <button type="button" onclick="abrirModalPacienteParaAgenda()" class="text-indigo-600 text-sm mt-1"><i class="fas fa-plus mr-1"></i>Cadastrar novo paciente</button>
+                            <button type="button" onclick="abrirModalPacienteParaAgenda()" class="text-indigo-600 text-sm mt-2 w-full text-center"><i class="fas fa-plus mr-1"></i>Cadastrar novo paciente</button>
                         </div>
                         <div><label class="label-modern">Data *</label><input type="date" id="consulta-data" required class="input-modern"></div>
                         <div><label class="label-modern">Hora *</label><input type="time" id="consulta-hora" required class="input-modern"></div>
@@ -307,7 +288,7 @@
                     </div>
                     <div class="flex gap-3 mt-5">
                         <button type="submit" class="btn-primary flex-1"><i class="fas fa-save mr-2"></i>Salvar</button>
-                        <button type="button" onclick="fecharModalAgenda()" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-2 rounded-xl">Cancelar</button>
+                        <button type="button" onclick="fecharModalAgenda()" class="btn-secondary flex-1">Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -324,8 +305,9 @@
                 </div>
                 <form id="form-financeiro">
                     <input type="hidden" id="recebimento-id">
-                    <div class="space-y-3">
-                        <div><label class="label-modern">Consulta</label>
+                    <div class="form-grid">
+                        <div>
+                            <label class="label-modern">Consulta</label>
                             <select id="recebimento-consulta-id" class="input-modern">
                                 <option value="">📋 Selecione uma consulta</option>
                             </select>
@@ -333,7 +315,9 @@
                         <div><label class="label-modern">Valor *</label><input type="number" step="0.01" id="recebimento-valor" required class="input-modern"></div>
                         <div><label class="label-modern">Forma Pagamento</label>
                             <select id="recebimento-forma" required class="input-modern">
-                                <option value="pix">💳 PIX</option><option value="dinheiro">💰 Dinheiro</option><option value="cartao">💳 Cartão</option>
+                                <option value="pix">💳 PIX</option>
+                                <option value="dinheiro">💰 Dinheiro</option>
+                                <option value="cartao">💳 Cartão</option>
                             </select>
                         </div>
                         <div><label class="label-modern">Data *</label><input type="date" id="recebimento-data" required class="input-modern"></div>
@@ -341,7 +325,7 @@
                     </div>
                     <div class="flex gap-3 mt-5">
                         <button type="submit" class="btn-success flex-1"><i class="fas fa-save mr-2"></i>Registrar</button>
-                        <button type="button" onclick="fecharModalFinanceiro()" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-2 rounded-xl">Cancelar</button>
+                        <button type="button" onclick="fecharModalFinanceiro()" class="btn-secondary flex-1">Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -357,7 +341,6 @@
                     <button onclick="fecharModalProntuario()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
                 </div>
                 
-                <!-- Tabs estilo app -->
                 <div class="flex overflow-x-auto gap-2 mb-4 pb-2 border-b">
                     <button onclick="mostrarTabProntuario('dados')" id="tab-dados" class="px-4 py-2 text-sm font-semibold rounded-full bg-indigo-100 text-indigo-600 whitespace-nowrap">📋 Dados</button>
                     <button onclick="mostrarTabProntuario('clinico')" id="tab-clinico" class="px-4 py-2 text-sm font-semibold text-gray-600 whitespace-nowrap">🩺 Clínico</button>
