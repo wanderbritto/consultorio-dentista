@@ -1,7 +1,6 @@
 console.log('📋 Pacientes.js carregado');
 
 let pendenteAgenda = false;
-let modalAgendaAberto = false;
 
 async function carregarPacientes() {
     console.log('🔄 Carregando pacientes...');
@@ -67,34 +66,32 @@ function abrirModalPaciente() {
     document.getElementById('modal-paciente-titulo').textContent = '👤 Novo Paciente';
     document.getElementById('form-paciente').reset();
     document.getElementById('paciente-id').value = '';
+    toggleBodyScroll(true);
     document.getElementById('modal-paciente').classList.remove('hidden');
-    document.getElementById('modal-paciente').style.display = 'flex';
 }
 
 function abrirModalPacienteParaAgenda() {
-    // Fechar modal da agenda primeiro
     fecharModalAgenda();
     pendenteAgenda = true;
     setTimeout(() => {
         document.getElementById('modal-paciente-titulo').textContent = '👤 Novo Paciente';
         document.getElementById('form-paciente').reset();
         document.getElementById('paciente-id').value = '';
+        toggleBodyScroll(true);
         document.getElementById('modal-paciente').classList.remove('hidden');
-        document.getElementById('modal-paciente').style.display = 'flex';
-    }, 100);
+    }, 150);
 }
 
 function fecharModalPaciente(event) {
-    if (!event || event.target.id === 'modal-paciente' || !event) {
+    if (!event || event.target.id === 'modal-paciente' || !event || event.target === document.getElementById('modal-paciente')) {
         document.getElementById('modal-paciente').classList.add('hidden');
-        document.getElementById('modal-paciente').style.display = 'none';
+        toggleBodyScroll(false);
         
-        // Se veio da agenda, reabrir modal da agenda
         if (pendenteAgenda) {
             pendenteAgenda = false;
             setTimeout(() => {
                 abrirModalAgenda();
-            }, 100);
+            }, 150);
         }
     }
 }
@@ -123,8 +120,8 @@ async function editarPaciente(id) {
         document.getElementById('paciente-estado').value = p.estado || '';
         document.getElementById('paciente-cep').value = p.cep || '';
         
+        toggleBodyScroll(true);
         document.getElementById('modal-paciente').classList.remove('hidden');
-        document.getElementById('modal-paciente').style.display = 'flex';
     } catch (error) {
         console.error('Erro ao editar paciente:', error);
         alert('Erro ao carregar dados do paciente');
@@ -193,12 +190,11 @@ document.getElementById('form-paciente')?.addEventListener('submit', async (e) =
             carregarPacientes();
             carregarSelectPacientes();
             
-            // Se veio da agenda, recarregar select e reabrir agenda
             if (pendenteAgenda) {
                 pendenteAgenda = false;
                 setTimeout(() => {
                     abrirModalAgenda();
-                }, 100);
+                }, 150);
             }
         } else {
             alert('Erro ao salvar paciente');

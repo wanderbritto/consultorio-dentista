@@ -234,15 +234,15 @@ function abrirModalAgenda() {
     document.getElementById('form-agenda').reset();
     document.getElementById('consulta-id').value = '';
     document.getElementById('consulta-valor').value = '0.00';
-    carregarSelectPacientes();
+    if (typeof carregarSelectPacientes === 'function') carregarSelectPacientes();
+    if (typeof toggleBodyScroll === 'function') toggleBodyScroll(true);
     document.getElementById('modal-agenda').classList.remove('hidden');
-    document.getElementById('modal-agenda').style.display = 'flex';
 }
 
 function fecharModalAgenda(event) {
-    if (!event || event.target.id === 'modal-agenda' || !event) {
+    if (!event || event.target.id === 'modal-agenda' || event.target === document.getElementById('modal-agenda')) {
         document.getElementById('modal-agenda').classList.add('hidden');
-        document.getElementById('modal-agenda').style.display = 'none';
+        if (typeof toggleBodyScroll === 'function') toggleBodyScroll(false);
     }
 }
 
